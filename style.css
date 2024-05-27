@@ -8,7 +8,7 @@
 
 body {
     text-align: center;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: Verdana;
 }
 
 .head {
@@ -100,11 +100,16 @@ p {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    margin-bottom: 50px;
+
 }
 
-.sau {
+.inicio {
     padding: 30px;
     background: #1D3A6E;
+    background-size: cover;
+    margin-top: 100px;
+
 }
 
 .box-container {
@@ -146,8 +151,12 @@ p {
     font-size: 16px;
 }
 
-.about {
+.Nosotros {
     background: #1D3A6E;
+    background-size: cover;
+    padding-top: 1px;
+    height: 70vh;
+    margin-top: 100px;
 }
 
 .team-container {
@@ -182,6 +191,7 @@ p {
 }
 
 .Proceso {
+    margin-top: 100px; 
     background: url(Bajo.png) no-repeat center;
     background-attachment: fixed;
     background-size: cover;
@@ -189,8 +199,10 @@ p {
 }
 
 .Resultados {
+    margin-top: 100px;
     padding-top: 20px;
     background: #1D3A6E;
+    background-size:auto;
     padding-bottom: 0;
 }
 
