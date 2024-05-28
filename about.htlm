@@ -1,0 +1,51 @@
+<html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link href="style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <title>Sobre Nosotros</title>
+</head>
+
+<body>
+    <div class="head">
+        <div class="Logo">
+            <a href="index.html">LOGO</a> <!-- Link to the home page -->
+        </div>
+        <nav class="navbar">
+            <a href="index.html#inicio">INICIO</a>
+            <a href="about.html">NOSOTROS</a>
+            <a href="index.html#proceso">PROCESO</a>
+            <a href="index.html#resultados">RESULTADOS</a>
+        </nav>
+    </div>
+
+    <section class="content about">
+        <h2 class="title">Sobre Nosotros</h2>
+        <div class="team-container">
+            <div class="team-member">
+                <figure>
+                    <img src="luis.jpg" alt="Luis" class="team-photo">
+                    <figcaption>
+                        <h3>Luis</h3>
+                        <p>Ingeniero de Software</p>
+                        <p>Especializado en Inteligencia Artificial</p>
+                    </figcaption>
+                </figure>
+            </div>
+            <div class="team-member">
+                <figure>
+                    <img src="mauricio.jpg" alt="Mauricio" class="team-photo">
+                    <figcaption>
+                        <h3>Mauricio</h3>
+                        <p>Ingeniero de Datos</p>
+                        <p>Experto en Procesamiento de Imágenes</p>
+                    </figcaption>
+                </figure>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

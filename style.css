@@ -8,15 +8,16 @@
 
 body {
     text-align: center;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', sans-serif;
     background-size: cover; 
 }
 
 .head {
+    padding: auto;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 70px;
+    height: 55px;
     background: #142950;
     position: fixed;
     width: 100%;
@@ -50,10 +51,11 @@ body {
 }
 
 .header {
+    padding-top: 100px;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh !important;
+    height: 100vh;
     background: url(header.png) no-repeat center;
     background-size: cover;
 }
@@ -88,7 +90,7 @@ p {
 }
 
 .btn-home {
-    display:flex;
+    display: flex;
 }
 
 .btn-home a {
@@ -101,11 +103,10 @@ p {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    
 }
 
 .inicio {
-    padding: 150px;
+    padding-top: 100px;
     background: #1D3A6E;
     background-size: cover;
 }
@@ -123,7 +124,7 @@ p {
     background: #264D94;
     text-align: center;
     border-radius: 1rem;
-    box-shadow: 0 .3rem 5rem rgb(0,0,0,.5);
+    box-shadow: 0 .3rem 5rem rgba(0, 0, 0, .5);
     margin: 2rem;
 }
 
@@ -152,9 +153,8 @@ p {
 .Nosotros {
     background: #1D3A6E;
     background-size: cover;
-    padding-top: 1px;
-    height: 70vh;
-    
+    padding-top: 90px;
+    height: 95vh;
 }
 
 .team-container {
@@ -189,7 +189,7 @@ p {
 }
 
 .Proceso {
-    
+    padding-top: 100px;
     background: url(Bajo.png) no-repeat center;
     background-attachment: fixed;
     background-size: cover;
@@ -197,7 +197,6 @@ p {
 }
 
 .Resultados {
-    
     padding-top: 70px;
     background: #1D3A6E;
     background-size: cover; 
@@ -216,4 +215,3 @@ p {
         display: none;
     }
 }
-
