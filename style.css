@@ -47,7 +47,7 @@ body {
 }
 
 .navbar a:hover {
-    background: #353535;
+    background: #FFBD11;
 }
 
 .header {
@@ -87,10 +87,12 @@ p {
 
 .btn:hover {
     background: none;
+    
 }
 
 .btn-home {
     display: flex;
+    
 }
 
 .btn-home a {
