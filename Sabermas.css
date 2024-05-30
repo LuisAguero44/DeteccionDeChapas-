@@ -50,14 +50,14 @@ body {
     text-decoration: none;
 }
 
-/* Estilo de los enlaces de navegación cuando se pasa el cursor por encima */
+ 
 .navbar a:hover {
-    background: #FFBD11;  /* Fondo gris oscuro */
+    background: #FFBD11; 
 }
 
-/* Estilo de la sección principal de contenido */
+
 .content.saber-mas {
-    padding-top: 100px;  /* Espacio superior para compensar la cabecera fija */
+    padding-top: 100px;  
     padding: 20px;
 }
 
@@ -68,23 +68,23 @@ body {
     font-weight: bold;
 }
 
-/* Estilo de los subtítulos */
+
 h2 {
     margin-top: 20px;
     font-size: 28px;
     font-weight: bold;
-    color: #333;  /* Color del subtítulo */
+    color: white;  /* Color del subtítulo */
 }
 
-/* Estilo de los sub-subtítulos */
+
 h3 {
     margin-top: 15px;
     font-size: 22px;
     font-weight: bold;
-    color: #555;  /* Color del sub-subtítulo */
+    color: white;  /* Color del sub-subtítulo */
 }
 
-/* Estilo de los párrafos */
+
 p {
     font-size: 18px;
     margin-bottom: 20px;
@@ -92,12 +92,13 @@ p {
 
 
 pre {
-    background-color: #f4f4f4;  /* Fondo gris claro */
+    background-color: #2a426c;  /* Fondo gris claro */
     padding: 10px;  /* Espaciado interno */
     border-radius: 5px;  /* Bordes redondeados */
     overflow-x: auto;  /* Permite desplazamiento horizontal */
     margin-bottom: 20px;  /* Espacio inferior */
 }
+
 
 
 code {
