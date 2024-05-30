@@ -1,61 +1,58 @@
-/* Reset general de estilo para eliminar márgenes y rellenos predeterminados */
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Estilo del cuerpo del documento */
+
 body {
     font-family: 'Segoe UI', sans-serif;
-    background-color: yellow;  /* Fondo amarillo */
-    color: black;  /* Texto en negro */
-    text-align: left;  /* Texto alineado a la izquierda */
-    padding: 20px;  /* Espaciado interno alrededor del contenido */
+    background-color: #142950;  
+    color: white;  
+    text-align: left;  
+    padding: 20px;  
 }
 
-/* Estilo de la cabecera */
+
 .head {
     display: flex;
     align-items: center;
     justify-content: space-between;
     height: 70px;
-    background: #142950;  /* Fondo de la cabecera */
-    position: fixed;  /* Fija la cabecera en la parte superior */
-    width: 100%;
-    z-index: 100;  /* Asegura que la cabecera esté siempre por encima del contenido */
-    padding: 0 20px;  /* Espaciado interno en la cabecera */
+    background: #142950;  
+    position: fixed;  
+    z-index: 100;  
+    padding: 0 20px;  
 }
 
-/* Estilo de la barra de navegación */
 .navbar {
     display: flex;
     margin-right: 10px;
 }
 
-/* Estilo del logo */
 .Logo {
     margin-left: 30px;
 }
 
-/* Estilo del enlace del logo */
+
 .Logo a {
     text-decoration: none;
-    color: white;  /* Texto blanco */
+    color: white;  
     font-size: 20px;
 }
 
-/* Estilo de los enlaces de navegación */
+
 .navbar a {
     display: block;
     padding: 23px 20px;
-    color: white;  /* Texto blanco */
+    color: white;  
     text-decoration: none;
 }
 
 /* Estilo de los enlaces de navegación cuando se pasa el cursor por encima */
 .navbar a:hover {
-    background: #353535;  /* Fondo gris oscuro */
+    background: #FFBD11;  /* Fondo gris oscuro */
 }
 
 /* Estilo de la sección principal de contenido */
@@ -64,8 +61,8 @@ body {
     padding: 20px;
 }
 
-/* Estilo del título principal */
 .title {
+    padding-top: 80px; ;
     margin-bottom: 20px;
     font-size: 36px;
     font-weight: bold;
@@ -93,7 +90,7 @@ p {
     margin-bottom: 20px;
 }
 
-/* Estilo para preformatear bloques de código */
+
 pre {
     background-color: #f4f4f4;  /* Fondo gris claro */
     padding: 10px;  /* Espaciado interno */
@@ -102,16 +99,15 @@ pre {
     margin-bottom: 20px;  /* Espacio inferior */
 }
 
-/* Estilo para el código dentro de los bloques preformateados */
+
 code {
     font-family: 'Courier New', monospace;
     font-size: 16px;
 }
 
-/* Estilo de listas */
 ul {
     margin-bottom: 20px;
-    padding-left: 20px;  /* Espacio de sangría para listas */
+    padding-left: 20px;  
 }
 
 ul li {
