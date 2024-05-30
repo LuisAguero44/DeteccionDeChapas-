@@ -13,7 +13,6 @@ body {
     background-color: 1D3A6E;  
     color: white;  
     text-align: left;  
-    padding: 20px;  
 }
 
 
@@ -22,7 +21,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 70px;
+    height: 55px;
     background: #142950;
     position: fixed;
     width: 100%;
