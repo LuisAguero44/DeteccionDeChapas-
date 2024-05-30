@@ -22,17 +22,15 @@ body {
     align-items: center;
     justify-content: space-between;
     height: 55px;
-    background: #142950;  
-    position: fixed;  
+    background: #142950;
+    position: fixed;
     width: 100%;
-    z-index: 100;  
-
-
+    z-index: 100;
+}
 .navbar {
     display: flex;
     margin-right: 10px;
 }
-
 
 .Logo {
     margin-left: 30px;
@@ -48,29 +46,26 @@ body {
 
 .navbar a {
     display: block;
-    padding: 10px 20px; 
+    padding: 23px 20px;
     color: white;  
     text-decoration: none;
-    background-color: #142950;  /* Fondo del botón */
-    margin: 5px;  
-    transition: background-color 0.3s, color 0.3s;  
+    background-color: #142950;
+    margin: 5px;
 }
 
-
+ 
 .navbar a:hover {
-    background: #FFBD11;  
-    color: #142950; 
+    background: #FFBD11; 
 }
 
 
 .content.saber-mas {
-    padding-top: 100px; 
+    padding-top: 100px;  
     padding: 20px;
 }
 
-
 .title {
-    padding-top: 80px;
+    padding-top: 80px; ;
     margin-bottom: 20px;
     font-size: 36px;
     font-weight: bold;
@@ -84,11 +79,12 @@ h2 {
     color: white;  
 }
 
+
 h3 {
     margin-top: 15px;
     font-size: 22px;
     font-weight: bold;
-    color: white;  
+    color: white; 
 }
 
 
@@ -97,23 +93,25 @@ p {
     margin-bottom: 20px;
 }
 
+
 pre {
-    background-color: #315189;  
+    background-color: #2a426c; 
     padding: 10px;  
     border-radius: 5px;  
     overflow-x: auto;  
     margin-bottom: 20px;  
 }
 
+
+
 code {
     font-family: 'Courier New', monospace;
     font-size: 16px;
 }
 
-/* Estilo de listas */
 ul {
     margin-bottom: 20px;
-    padding-left: 20px; 
+    padding-left: 20px;  
 }
 
 ul li {
