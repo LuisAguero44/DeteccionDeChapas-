@@ -45,6 +45,7 @@ body {
 .navbar a {
     display: block;
     padding: 23px 20px;
+    margin-right: 10px;
     color: white;  
     text-decoration: none;
 }
@@ -72,7 +73,7 @@ h2 {
     margin-top: 20px;
     font-size: 28px;
     font-weight: bold;
-    color: white;  /* Color del subtítulo */
+    color: white;  
 }
 
 
@@ -80,7 +81,7 @@ h3 {
     margin-top: 15px;
     font-size: 22px;
     font-weight: bold;
-    color: white;  /* Color del sub-subtítulo */
+    color: white; 
 }
 
 
@@ -91,7 +92,7 @@ p {
 
 
 pre {
-    background-color: #2a426c;  /* Fondo gris claro */
+    background-color: #2a426c; 
     padding: 10px;  
     border-radius: 5px;  
     overflow-x: auto;  
