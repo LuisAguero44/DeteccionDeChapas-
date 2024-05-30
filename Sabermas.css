@@ -6,7 +6,7 @@
 
 body {
     font-family: 'Segoe UI', sans-serif;
-    background-color: #142950;
+    background-color: #1D3A6E;
     color: white;
     text-align: center;
 }
@@ -45,15 +45,16 @@ body {
 }
 
 .navbar a:hover {
-    background: #353535;
+    background: #FFBD11;
 }
 
 .content.saber-mas {
     padding-top: 100px;
-    padding: 20px;
+    padding: 200px;
 }
 
 .title {
+    color: white;
     margin-bottom: 20px;
     font-size: 36px;
     font-weight: bold;
