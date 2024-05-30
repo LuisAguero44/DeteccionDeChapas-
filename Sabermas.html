@@ -1,12 +1,12 @@
-<html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="Sabermas.css" rel="stylesheet">
+    <link href="sabermas.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-    <title>Sobre Nosotros</title>
+    <title>Sobre el Proyecto</title>
 </head>
 
 <body>
@@ -23,9 +23,72 @@
     </div>
 
     <section class="content saber-mas">
-        <h2 class="title">Sobre el Proyecto</h2>
+        <h1 class="title">Conversión de un Modelo de PyTorch a C++ para Reconocimiento de Placas de Vehículos</h1>
+        
+        <h2>Introducción</h2>
+        <p>La creación de un modelo de reconocimiento de placas de vehículos utilizando YOLOv5 en PyTorch es solo el primer paso. Para aplicaciones en tiempo real o integraciones con sistemas que requieren alta eficiencia, es beneficioso convertir el modelo a C++. Exploraremos cómo llevar a cabo esta conversión y las implicaciones en términos de optimización, velocidad y otros factores.</p>
 
-        <p>Info del proyecto</p>
+        <h2>1. Exportación del Modelo de PyTorch a ONNX</h2>
+        <p>Para iniciar la conversión, primero debemos exportar el modelo entrenado en PyTorch a un formato intermedio comúnmente utilizado, como ONNX. Este formato facilita la interoperabilidad entre diferentes frameworks de aprendizaje profundo y permite la implementación en diversas plataformas.</p>
+
+        <h3>Paso 1: Exportar el Modelo a ONNX</h3>
+        <p>Después de entrenar tu modelo YOLOv5 en PyTorch, exporta el modelo a ONNX con el siguiente comando:</p>
+        <pre><code>python export.py --weights runs/train/exp/weights/best.pt --img 640 --batch 1 --device 0 --include onnx</code></pre>
+        <p>Este comando genera un archivo <code>model.onnx</code> que contiene el modelo convertido.</p>
+
+        <h2>2. Conversión de ONNX a TensorRT</h2>
+        <p>Para aplicaciones que requieren un rendimiento aún mayor, puedes convertir el modelo ONNX a TensorRT. TensorRT es una biblioteca de optimización de redes neuronales de NVIDIA que acelera la inferencia de modelos.</p>
+
+        <h3>Paso 2: Convertir ONNX a TensorRT</h3>
+        <p>Utiliza la herramienta <code>trtexec</code> para convertir el archivo ONNX a un motor TensorRT:</p>
+        <pre><code>trtexec --onnx=model.onnx --saveEngine=model.trt</code></pre>
+        <p>Este comando crea un archivo <code>model.trt</code> optimizado para inferencia rápida.</p>
+
+        <h2>3. Implementación en C++</h2>
+        <p>Con el modelo convertido a ONNX o TensorRT, el siguiente paso es implementarlo en un entorno C++. Para esto, puedes usar bibliotecas como onnxruntime o TensorRT.</p>
+
+        <h3>Paso 3: Cargar y Ejecutar el Modelo en C++ con onnxruntime</h3>
+        <p>El siguiente es un ejemplo de cómo cargar y ejecutar un modelo ONNX en C++ utilizando onnxruntime:</p>
+        <pre><code>#include &lt;onnxruntime/core/providers/cpu/cpu_provider_factory.h&gt;
+#include &lt;onnxruntime/core/session/onnxruntime_cxx_api.h&gt;
+
+int main() {
+    Ort::Env env(ORT_LOGGING_LEVEL_WARNING, "test");
+    Ort::SessionOptions session_options;
+    session_options.SetIntraOpNumThreads(1);
+    Ort::Session session(env, "model.onnx", session_options);
+    return 0;
+}</code></pre>
+
+        <h2>Diferencias entre PyTorch y C++</h2>
+        <p>Al convertir un modelo de PyTorch a C++, es importante entender las diferencias clave entre ambos entornos:</p>
+
+        <h3>Optimización</h3>
+        <ul>
+            <li>PyTorch ofrece flexibilidad y es ideal para investigación y desarrollo rápido.</li>
+            <li>C++ permite un mayor control sobre la optimización a nivel de hardware, resultando en una ejecución más eficiente en producción.</li>
+        </ul>
+
+        <h3>Velocidad</h3>
+        <ul>
+            <li>La ejecución en PyTorch puede ser más lenta debido a la interpretación y overhead.</li>
+            <li>C++ ofrece una mayor velocidad y eficiencia, especialmente cuando se utilizan bibliotecas optimizadas como TensorRT.</li>
+        </ul>
+
+        <h3>Desarrollo</h3>
+        <ul>
+            <li>PyTorch facilita el desarrollo rápido de prototipos y cuenta con un extenso soporte para debugging y visualización.</li>
+            <li>C++ requiere un desarrollo más detallado y complejo, con un mayor tiempo de depuración, pero es esencial para aplicaciones de alto rendimiento.</li>
+        </ul>
+
+        <h3>Portabilidad</h3>
+        <ul>
+            <li>PyTorch es compatible con múltiples plataformas, pero depende del entorno Python.</li>
+            <li>C++ tiene mayor portabilidad y puede integrarse más fácilmente en diversos sistemas y hardware sin la necesidad de un intérprete.</li>
+        </ul>
+
+        <h2>Conclusión</h2>
+        <p>La conversión de un modelo de PyTorch a C++ es un paso crucial para llevar modelos de investigación a producción. Permite aprovechar las ventajas de optimización y velocidad de C++, asegurando que las aplicaciones de reconocimiento de placas de vehículos sean eficientes y rápidas en entornos del mundo real.</p>
     </section>
 </body>
 </html>
