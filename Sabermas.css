@@ -20,12 +20,11 @@ body {
     align-items: center;
     justify-content: space-between;
     height: 70px;
-    background: #142950;  
-    position: fixed;  
-    z-index: 100;  
-    padding: 0 20px;  
+    background: #142950;
+    position: fixed;
+    width: 100%;
+    z-index: 100;
 }
-
 .navbar {
     display: flex;
     margin-right: 10px;
@@ -93,10 +92,10 @@ p {
 
 pre {
     background-color: #2a426c;  /* Fondo gris claro */
-    padding: 10px;  /* Espaciado interno */
-    border-radius: 5px;  /* Bordes redondeados */
-    overflow-x: auto;  /* Permite desplazamiento horizontal */
-    margin-bottom: 20px;  /* Espacio inferior */
+    padding: 10px;  
+    border-radius: 5px;  
+    overflow-x: auto;  
+    margin-bottom: 20px;  
 }
 
 
