@@ -1,10 +1,9 @@
-/* about.css */
 
 body {
     text-align: center;
     font-family: 'Segoe UI';
-    background-color: #1D3A6E; /* Fondo azul oscuro */
-    color: white; /* Color de texto blanco */
+    background-color: #1D3A6E; 
+    color: white; 
 }
 
 .head {
@@ -49,7 +48,7 @@ body {
 }
 
 .about {
-    background-color: #1D3A6E; /* Fondo azul oscuro */
+    background-color: #142950; 
     padding: 50px 0;
 }
 
@@ -65,7 +64,7 @@ body {
     flex-direction: column;
     align-items: center;
     margin: 20px;
-    color: white; /* Color de texto blanco */
+    color: white; 
 }
 
 .team-member figure {
