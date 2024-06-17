@@ -25,10 +25,13 @@
     <section class="content saber-mas">
         <h1 class="title">Conversión de un Modelo de PyTorch a C++ para Reconocimiento de chapas de Vehículos</h1>
         
-        <h2>Introducción</h2>
-        <p>La creación de un modelo de reconocimiento de chapas de vehículos utilizando YOLOv5 en PyTorch es solo el primer paso. Para aplicaciones en tiempo real o integraciones con sistemas que requieren alta eficiencia, es beneficioso convertir el modelo a C++. Exploraremos cómo llevar a cabo esta conversión y las implicaciones en términos de optimización, velocidad y otros factores.</p>
+        <h2>1. Introducción</h2>
+        <p>Este proyecto tiene como objetivo convertir un
+         modelo de reconocimiento de objetos entrenado en PyTorch a ONNX y luego integrarlo en una aplicación C++ para el reconocimiento de chapas de vehículos.
+        Ahora se detallavel proceso y cómo funciona la inteligencia artificial en este proyecto.
+        </p>
 
-        <h2>1. Exportación del Modelo de PyTorch a ONNX</h2>
+        <h2>2. Conversión del Modelo de PyTorch a ONNX</h2>
         <p>Para iniciar la conversión, primero debemos exportar el modelo entrenado en PyTorch a un formato intermedio comúnmente utilizado, como ONNX. Este formato facilita la interoperabilidad entre diferentes frameworks de aprendizaje profundo y permite la implementación en diversas plataformas.</p>
 
         <h3>Paso 1: Exportar el Modelo a ONNX</h3>
@@ -36,7 +39,7 @@
         <pre><code>python export.py --weights runs/train/exp/weights/best.pt --img 640 --batch 1 --device 0 --include onnx</code></pre>
         <p>Este comando genera un archivo <code>model.onnx</code> que contiene el modelo convertido.</p>
 
-        <h2>2. Conversión de ONNX a TensorRT</h2>
+        <h2>3. Conversión de ONNX a TensorRT</h2>
         <p>Para aplicaciones que requieren un rendimiento aún mayor, se debe convertir el modelo ONNX a TensorRT. TensorRT es una biblioteca de optimización de redes neuronales de NVIDIA que acelera la inferencia de modelos.</p>
 
         <h3>Paso 2: Convertir ONNX a TensorRT</h3>
@@ -44,22 +47,28 @@
         <pre><code>trtexec --onnx=model.onnx --saveEngine=model.trt</code></pre>
         <p>Este comando crea un archivo <code>model.trt</code> optimizado para inferencia rápida.</p>
 
-        <h2>3. Implementación en C++</h2>
+        <h2>4. Implementación en C++</h2>
         <p>Con el modelo convertido a ONNX o TensorRT, el siguiente paso es implementarlo en un entorno C++. Para esto, se usa bibliotecas como onnxruntime o TensorRT.</p>
 
         <h3>Paso 3: Cargar y Ejecutar el Modelo en C++ con onnxruntime</h3>
         <p>El siguiente es un ejemplo de cómo cargar y ejecutar un modelo ONNX en C++ utilizando onnxruntime:</p>
-        <pre><code>#include &lt;onnxruntime/core/providers/cpu/cpu_provider_factory.h&gt;
-#include &lt;onnxruntime/core/session/onnxruntime_cxx_api.h&gt;
 
-int main() {
-    Ort::Env env(ORT_LOGGING_LEVEL_WARNING, "test");
-    Ort::SessionOptions session_options;
-    session_options.SetIntraOpNumThreads(1);
-    Ort::Session session(env, "model.onnx", session_options);
-    return 0;
-}</code></pre>
-
+         <h2>5. Codigo de C++</h2>
+         <pre><code>#include &lt;cpu_provider_factory.h&gt;
+            #include &lt;onnxruntime_cxx_api.h&gt;
+            
+            Ort::Env env(ORT_LOGGING_LEVEL_WARNING, "ChapasDetector");
+            Ort::SessionOptions session_options;
+            Ort::Session session(env, "best.onnx", session_options);
+            
+            
+            cv::Mat image = cv::imread("Chapa.jpg");
+            cv::resize(image, image, cv::Size(640, 640));
+            cv::cvtColor(image, image, cv::COLOR_BGR2RGB);
+            
+            
+             </code></pre>
+            
         <h2>Diferencias entre PyTorch y C++</h2>
         <p>Al convertir un modelo de PyTorch a C++, es importante entender las diferencias clave entre ambos entornos:</p>
 
