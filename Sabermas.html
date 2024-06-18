@@ -26,10 +26,8 @@
         <h1 class="title">Conversión de un Modelo de PyTorch a C++ para Reconocimiento de chapas de Vehículos</h1>
         
         <h2>1. Introducción</h2>
-        <p>Este proyecto tiene como objetivo convertir un
-         modelo de reconocimiento de objetos entrenado en PyTorch a ONNX y luego integrarlo en una aplicación C++ para el reconocimiento de chapas de vehículos.
-        Ahora se detallavel proceso y cómo funciona la inteligencia artificial en este proyecto.
-        </p>
+        <p>Este proyecto tiene como objetivo convertir un modelo de reconocimiento de objetos entrenado en PyTorch a ONNX y luego integrarlo en una aplicación C++ para el reconocimiento de chapas de vehículos.
+        Ahora se detalla el proceso y cómo funciona la inteligencia artificial en este proyecto.</p>
 
         <h2>2. Conversión del Modelo de PyTorch a ONNX</h2>
         <p>Para iniciar la conversión, primero debemos exportar el modelo entrenado en PyTorch a un formato intermedio comúnmente utilizado, como ONNX. Este formato facilita la interoperabilidad entre diferentes frameworks de aprendizaje profundo y permite la implementación en diversas plataformas.</p>
@@ -53,22 +51,223 @@
         <h3>Paso 3: Cargar y Ejecutar el Modelo en C++ con onnxruntime</h3>
         <p>El siguiente es un ejemplo de cómo cargar y ejecutar un modelo ONNX en C++ utilizando onnxruntime:</p>
 
-         <h2>5. Codigo de C++</h2>
-         <pre><code>#include &lt;cpu_provider_factory.h&gt;
-            #include &lt;onnxruntime_cxx_api.h&gt;
-            
-            Ort::Env env(ORT_LOGGING_LEVEL_WARNING, "ChapasDetector");
-            Ort::SessionOptions session_options;
-            Ort::Session session(env, "best.onnx", session_options);
-            
-            
-            cv::Mat image = cv::imread("Chapa.jpg");
-            cv::resize(image, image, cv::Size(640, 640));
-            cv::cvtColor(image, image, cv::COLOR_BGR2RGB);
-            
-            
-             </code></pre>
-            
+        <pre><code>#include &lt;cpu_provider_factory.h&gt;
+#include &lt;onnxruntime_cxx_api.h&gt;
+
+Ort::Env env(ORT_LOGGING_LEVEL_WARNING, "ChapasDetector");
+Ort::SessionOptions session_options;
+Ort::Session session(env, "best.onnx", session_options);
+
+cv::Mat image = cv::imread("Chapa.jpg");
+cv::resize(image, image, cv::Size(640, 640));
+cv::cvtColor(image, image, cv::COLOR_BGR2RGB);
+</code></pre>
+
+        <h3>Código de detección y reconocimiento de matrículas en Python (PyTorch)</h3>
+        <p>El siguiente código en Python muestra cómo se realiza la detección y reconocimiento de matrículas utilizando YOLOv5 y PaddleOCR:</p>
+        <pre><code>import cv2
+import torch
+import numpy as np
+import os 
+from paddleocr import PaddleOCR,draw_ocr
+
+ocr = PaddleOCR(use_angle_cls=True,lang='en')
+model = torch.hub.load('ultralytics/yolov5', 'custom',path = '/home/coliveri/best.pt')
+
+path_dirs_videos = "/media/gpu"
+dir_videos = os.listdir(path_dirs_videos)
+path_video = ""
+detection = cv2.createBackgroundSubtractorMOG2(history=10000,varThreshold=12)
+y1_mov = 200
+y2_mov = 250
+x1_mov = 350
+x2_mov = 750
+y1 =250
+y2 = 560
+x1 = 350
+x2 = 1085
+
+for dir in dir_videos:
+    path_videos = os.listdir(path_dirs_videos + "/" + dir)
+    for video in path_videos:
+        path_video = path_dirs_videos + "/" + dir + "/" + video
+        extencion = video.split('.')
+        if extencion[1] == 'mp4':
+            capture = cv2.VideoCapture(path_video)
+            while capture.isOpened():
+                ret,frame = capture.read()
+                if ret ==False:
+                    break
+                cv2.rectangle(frame,(x1,y1),(x2,y2),(0,255,0),2)
+                recorte_det = frame[y1:y2,x1:x2]
+                recorte_mov = frame[y1_mov:y2_mov,x1_mov:x2_mov]
+                mascara = detection.apply(recorte_mov)
+                _,umbral = cv2.threshold(mascara,254,255,cv2.THRESH_BINARY)
+                contornos,_ = cv2.findContours(umbral,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+                contornos = sorted(contornos,key=lambda x:cv2.contourArea(x),reverse= True)
+                for contorno in contornos:
+                    area = cv2.contourArea(contorno)
+                    if area>5000:
+                        results = model(recorte_det)
+                        try:
+                            crop = results.crop(save = False)
+                            coor = crop[0]['box']
+                            chapax1 = round(coor[0].detach().cpu().numpy()+0)
+                            chapay1 = round(coor[1].detach().cpu().numpy()+0)
+                            chapax2 = round(coor[2].detach().cpu().numpy()+0)
+                            chapay2 = round(coor[3].detach().cpu().numpy()+0)
+                            placa = frame[y1 + chapay1:y1 + chapay2,x1 + chapax1:x1 + chapax2]
+                            img_out = cv2.rectangle(frame,(x1+chapax1,y1+chapay1),(x1+chapax2,y1+chapay2),(0,255,0),2)
+                            lectura = ocr.ocr(placa,cls=True)
+                            chapa = lectura[0][0][1][0]
+                            confianza = lectura[0][0][1][1]
+                            font = cv2.FONT_HERSHEY_SIMPLEX
+                            org = (50, 50)
+                            fontScale = 1
+                            color = (0,255, 0)
+                            thickness = 2
+                            img_out = cv2.putText(img_out, chapa, (x1+chapax2,y1+chapay1), font,fontScale, color, thickness, cv2.LINE_AA)
+                            cv2.imshow('Detector de Chapas', img_out)
+                        except:
+                            cv2.imshow('Detector de Chapas', frame)
+                t = cv2.waitKey(1)
+                if t == 27:
+                    break
+            capture.release()
+            cv2.destroyAllWindows()
+</code></pre>
+
+        <h3>Código de detección y reconocimiento de matrículas en C++</h3>
+        <p>El siguiente código en C++ muestra cómo se realiza la detección y reconocimiento de matrículas utilizando OpenCV y ONNX Runtime:</p>
+        <pre><code>#include &lt;iostream&gt;
+#include &lt;opencv2/opencv.hpp&gt;
+#include &lt;onnxruntime_cxx_api.h&gt;
+#include &lt;filesystem&gt;
+
+namespace fs = std::filesystem;
+
+using namespace cv;
+using namespace std;
+
+int main() {
+    // Modelo ONNX
+    const string model_path = "/home/coliveri/best.onnx";
+
+    // ONNX Runtime
+    Ort::Env env(ORT_LOGGING_LEVEL_WARNING, "Detector");
+    Ort::SessionOptions session_options;
+    session_options.SetIntraOpNumThreads(1);
+    Ort::Session session(env, model_path.c_str(), session_options);
+
+    // Máscara para detección de cuerpos en movimiento
+    Ptr<BackgroundSubtractorMOG2> detection = createBackgroundSubtractorMOG2(10000, 12, false);
+
+    // Zonas de detección
+    int y1_mov = 200, y2_mov = 250, x1_mov = 350, x2_mov = 750;
+    int y1 = 250, y2 = 560, x1 = 350, x2 = 1085;
+
+    // Directorio contenedor de videos
+    const string path_dirs_videos = "/media/gpu";
+
+    for (const auto& entry : fs::directory_iterator(path_dirs_videos)) {
+        if (fs::is_directory(entry)) {
+            for (const auto& video : fs::directory_iterator(entry.path())) {
+                if (video.path().extension() == ".mp4") {
+                    string path_video = video.path().string();
+
+                    // Captura de los frames del video
+                    VideoCapture capture(path_video);
+
+                    if (!capture.isOpened()) {
+                        cerr << "Error al abrir el video: " << path_video << endl;
+                        continue;
+                    }
+
+                    // Bucle de detección de chapas
+                    while (capture.isOpened()) {
+                        Mat frame;
+                        capture >> frame;
+
+                        if (frame.empty())
+                            break;
+
+                        // Rectángulo en Área de interés
+                        rectangle(frame, Point(x1, y1), Point(x2, y2), Scalar(0, 255, 0), 2);
+
+                        // Área de interés
+                        Mat recorte_det = frame(Rect(x1, y1, x2 - x1, y2 - y1));
+                        Mat recorte_mov = frame(Rect(x1_mov, y1_mov, x2_mov - x1_mov, y2_mov - y1_mov));
+
+                        // Máscara de detección de movimiento
+                        Mat mascara;
+                        detection->apply(recorte_mov, mascara);
+                        threshold(mascara, mascara, 254, 255, THRESH_BINARY);
+
+                        vector<vector<Point>> contornos;
+                        findContours(mascara, contornos, RETR_TREE, CHAIN_APPROX_SIMPLE);
+
+                        for (const auto& contorno : contornos) {
+                            double area = contourArea(contorno);
+                            if (area > 5000) {
+
+                                cv::resize(recorte_det, recorte_det, cv::Size(640, 640));
+                                cv::cvtColor(recorte_det, recorte_det, cv::COLOR_BGR2RGB);
+                                recorte_det.convertTo(recorte_det, CV_32F, 1.0 / 255);
+
+                                // Crear tensor de entrada
+                                std::vector<int64_t> input_shape = {1, 3, 640, 640};
+                                std::vector<float> input_tensor_values;
+                                input_tensor_values.assign((float*)recorte_det.datastart, (float*)recorte_det.dataend);
+
+                                auto memory_info = Ort::MemoryInfo::CreateCpu(OrtArenaAllocator, OrtMemTypeDefault);
+                                Ort::Value input_tensor = Ort::Value::CreateTensor<float>(memory_info, input_tensor_values.data(), input_tensor_values.size(), input_shape.data(), input_shape.size());
+
+                                // Nombres de entradas y salidas del modelo ONNX
+                                const char* input_names[] = {"images"};
+                                const char* output_names[] = {"output"};
+
+                                // Ejecutar la sesión
+                                auto output_tensors = session.Run(Ort::RunOptions{nullptr}, input_names, &input_tensor, 1, output_names, 1);
+                                float* raw_output = output_tensors.front().GetTensorMutableData<float>();
+
+                                // Resultados
+                                vector<Rect> boxes;
+                                vector<float> scores;
+                                for (int i = 0; i < 100; ++i) {
+                                    if (raw_output[4] > 0.5) {
+                                        int x = raw_output[0] * frame.cols;
+                                        int y = raw_output[1] * frame.rows;
+                                        int w = raw_output[2] * frame.cols - x;
+                                        int h = raw_output[3] * frame.rows - y;
+                                        boxes.emplace_back(x, y, w, h);
+                                        scores.push_back(raw_output[4]);
+                                    }
+                                    raw_output += 85;
+                                }
+
+                                for (size_t i = 0; i < boxes.size(); ++i) {
+                                    rectangle(frame, boxes[i], Scalar(0, 255, 0), 2);
+                                    putText(frame, to_string(scores[i]), Point(boxes[i].x, boxes[i].y - 10), FONT_HERSHEY_SIMPLEX, 0.9, Scalar(0, 255, 0), 2);
+                                }
+
+                                imshow("Detector de Chapas", frame);
+                            }
+                        }
+
+                        if (waitKey(1) == 27)
+                            break;
+                    }
+                    capture.release();
+                    destroyAllWindows();
+                }
+            }
+        }
+    }
+
+    return 0;
+}
+</code></pre>
+
         <h2>Diferencias entre PyTorch y C++</h2>
         <p>Al convertir un modelo de PyTorch a C++, es importante entender las diferencias clave entre ambos entornos:</p>
 
