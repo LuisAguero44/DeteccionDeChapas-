@@ -7,7 +7,7 @@ using namespace cv;
 using namespace std;
 
 int main() {
-    // Modelo YOLOv5 cargado desde un archivo ONNX
+    // Modelo  ONNX
     torch::jit::script::Module model = torch::jit::load("best.onnx");
 
     // Directorios de videos
@@ -38,24 +38,19 @@ int main() {
             vector<string> extencion = split(video, ".");
             if (extencion[1] == "mp4") {
                 VideoCapture capture(path_video);
-                vector<string> lecturas;
 
-                // Bucle de detección de Chapas
+                vector<string> lecturas;
                 while (capture.isOpened()) {
-                    // Leemos frame a frame
                     Mat frame;
                     capture >> frame;
                     if (frame.empty())
                         break;
                     
-                    // Rectángulo en Área de interés
+                   
                     rectangle(frame, Point(x1, y1), Point(x2, y2), Scalar(0, 255, 0), 2);
-                    
-                    // Recortamos Área de interés
                     Mat recorte_det = frame(Rect(x1, y1, x2 - x1, y2 - y1));
                     Mat recorte_mov = frame(Rect(x1_mov, y1_mov, x2_mov - x1_mov, y2_mov - y1_mov));
                     
-                    // Aplicamos la máscara de detección de movimiento en el recorte
                     Mat mascara;
                     detection->apply(recorte_mov, mascara);
                     threshold(mascara, mascara, 254, 255, THRESH_BINARY);
