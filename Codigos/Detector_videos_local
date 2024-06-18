@@ -7,7 +7,7 @@ using namespace cv;
 using namespace std;
 
 int main() {
-    // Cargar el modelo YOLOv5 desde un archivo ONNX
+    //Modelo ONNX
     torch::jit::script::Module model = torch::jit::load("best.onnx");
 
     // Video
@@ -24,7 +24,6 @@ int main() {
     int mod = 1190;
 
     while (cap.isOpened()) {
-        // Recuperamos los frames del video uno a uno
         cont++;
         cout << "\rProcesando frame numero: " << cont << flush;
 
@@ -34,14 +33,12 @@ int main() {
         if (frame.empty())
             break;
 
-        // Recortamos el área de interés del frame
         Mat img_in = frame(Rect(x1, y1, x2 - x1, y2 - y1));
 
         if (cont >= mod) {
             // Realizamos la inferencia con el modelo
             at::Tensor results = model.forward({img_in});
             try {
-                // Procesamos los resultados para obtener las coordenadas de la chapa
                 auto crop = results.toTensor().slice(1, 0, 1);
                 auto coor = crop[0]["box"];
                 int chapax1 = round(coor[0].item().toFloat());
@@ -49,7 +46,6 @@ int main() {
                 int chapax2 = round(coor[2].item().toFloat());
                 int chapay2 = round(coor[3].item().toFloat());
                 
-                // Dibujamos el rectángulo alrededor de la chapa en el frame original
                 rectangle(frame, Point(x1 + chapax1, y1 + chapay1), Point(x1 + chapax2, y1 + chapay2), Scalar(0, 255, 0), 2);
                 cout << "Chapa Detectada" << endl;
             } catch (...) {
@@ -68,7 +64,6 @@ int main() {
             break;
     }
 
-    // Liberamos los recursos
     cap.release();
     destroyAllWindows();
 
