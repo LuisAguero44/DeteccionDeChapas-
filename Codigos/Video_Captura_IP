@@ -1,0 +1,75 @@
+#include <iostream>
+#include <opencv2/opencv.hpp>
+#include <torch/script.h>
+#include <torch/torch.h>
+
+using namespace cv;
+using namespace std;
+
+int main() {
+    // Cargar el modelo YOLOv5 desde un archivo ONNX
+    torch::jit::script::Module model = torch::jit::load("best.onnx");
+
+    // Crear un objeto de sustractor de fondo para detección de cuerpos en movimiento
+    Ptr<BackgroundSubtractorMOG2> detection = cv::createBackgroundSubtractorMOG2(10000, 12, false);
+
+    // Definir las regiones de interés para detección de movimiento y de chapas
+    int y1_mov = 200;
+    int y2_mov = 250;
+    int x1_mov = 350;
+    int x2_mov = 750;
+
+    int y1 = 250;
+    int y2 = 560;
+    int x1 = 350;
+    int x2 = 1085;
+
+    // URL del servidor RTSP de Dahua
+    string PASS = "123456";
+    string IP = "192.168.100.2";
+    string CH = "3";
+    string URL = "rtsp://admin:" + PASS + "@" + IP + ":554/Streaming/Channels/" + CH + "01";
+
+    // Captura de video desde el servidor RTSP
+    VideoCapture Capture(URL);
+
+    while (true) {
+        // Obtener el siguiente frame del video
+        Mat frame;
+        Capture >> frame;
+
+        if (frame.empty())
+            break;
+
+        // Redimensionar el frame para que tenga una altura proporcional al ancho
+        int w = frame.rows;
+        int h = static_cast<int>(w / 1.79);
+        resize(frame, frame, Size(w, h));
+
+        // Realizar la detección de chapas en el frame actual
+        torch::Tensor results = model.forward({frame});
+        try {
+            auto crop = results.toTensor().slice(1, 0, 1);
+            auto coor = crop[0]["box"];
+            int chapax1 = round(coor[0].item().toFloat());
+            int chapay1 = round(coor[1].item().toFloat());
+            int chapax2 = round(coor[2].item().toFloat());
+            int chapay2 = round(coor[3].item().toFloat());
+            rectangle(frame, Point(chapax1, chapay1), Point(chapax2, chapay2), Scalar(0, 255, 0), 2);
+            imshow("Detector de Chapas", frame);
+        } catch (...) {
+            imshow("Detector de Chapas", frame);
+        }
+
+        // Esperar por una tecla
+        int key = waitKey(1);
+        if (key == 27)
+            break;
+    }
+
+    // Liberar recursos
+    Capture.release();
+    destroyAllWindows();
+
+    return 0;
+}

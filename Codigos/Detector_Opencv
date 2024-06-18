@@ -1,0 +1,76 @@
+#include <iostream>
+#include <opencv2/opencv.hpp>
+#include <torch/script.h>
+
+using namespace cv;
+using namespace std;
+
+int main() {
+    // Cargamos el modelo ONNX
+    torch::jit::script::Module model = torch::jit::load("best.onnx");
+
+    VideoCapture cap("C:/Users/ceom1/Desktop/Facultad/9no Semestre/IA/DataSet_Chapas/YOLOv5/ch03_20230901103040.mp4");
+
+    Ptr<BackgroundSubtractorMOG2> detection = createBackgroundSubtractorMOG2(10000, 12, false);
+
+    string Ctext = "";
+
+    while (true) {
+        Mat frame;
+        cap >> frame;
+
+        if (frame.empty())
+            break;
+
+        rectangle(frame, Point(100, 100), Point(200, 150), Scalar(0, 0, 0), FILLED);
+        putText(frame, Ctext.substr(0, 7), Point(130, 160), FONT_HERSHEY_SIMPLEX, 1, Scalar(0, 255, 0), 2);
+
+        // ZONA DE DETECCION DE VEHICULO
+        Rect veh_rect(350, 200, 400, 50);
+        rectangle(frame, veh_rect, Scalar(0, 255, 0), 2);
+
+        // ZONA DE DETECCION DE CHAPAS
+        Rect plate_rect(500, 250, 570, 310);
+        rectangle(frame, plate_rect, Scalar(0, 255, 0), 2);
+
+        Mat roi_det = frame(plate_rect);
+        Mat roi_mov = frame(veh_rect);
+
+        Mat mask;
+        detection->apply(roi_mov, mask);
+        threshold(mask, mask, 254, 255, THRESH_BINARY);
+
+        vector<vector<Point>> contours;
+        findContours(mask, contours, RETR_TREE, CHAIN_APPROX_SIMPLE);
+
+        for (const auto& contour : contours) {
+            double area = contourArea(contour);
+            if (area > 5000) {
+                // Convertimos la región de interés a tensor
+                torch::Tensor tensor_image = torch::from_blob(roi_det.data, {1, roi_det.rows, roi_det.cols, 3}, torch::kByte);
+                tensor_image = tensor_image.permute({0, 3, 1, 2});
+                tensor_image = tensor_image.to(torch::kFloat) / 255.0;
+
+                // Realizamos la inferencia
+                std::vector<torch::jit::IValue> inputs;
+                inputs.push_back(tensor_image);
+                at::Tensor results = model.forward(inputs).toTensor();
+
+                // Mostramos los resultados
+                cv::imshow("Detector de Placas", np::squeeze(results).cv2());
+            }
+        }
+
+        imshow("Mascara", mask);
+        imshow("Detector de Placas", frame);
+
+        int key = waitKey(1);
+        if (key == 27)
+            break;
+    }
+
+    cap.release();
+    destroyAllWindows();
+
+    return 0;
+}

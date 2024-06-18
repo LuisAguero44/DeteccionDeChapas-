@@ -1,0 +1,45 @@
+#include <iostream>
+#include <opencv2/opencv.hpp>
+#include <torch/script.h>
+#include <torch/torch.h>
+
+using namespace cv;
+using namespace std;
+
+int main() {
+    // Cargamos el modelo ONNX
+    torch::jit::script::Module model = torch::jit::load("best.onnx");
+
+    string video = "ch03_20230901103040.mp4";
+    VideoCapture cap(video);
+
+    while(cap.isOpened()) {
+        Mat frame;
+        cap >> frame;
+
+        if (frame.empty())
+            break;
+
+        // Convertimos la imagen a tensor
+        torch::Tensor tensor_image = torch::from_blob(frame.data, {1, frame.rows, frame.cols, 3}, torch::kByte);
+        tensor_image = tensor_image.permute({0, 3, 1, 2});
+        tensor_image = tensor_image.to(torch::kFloat) / 255.0;
+
+        // Realizamos la inferencia
+        std::vector<torch::jit::IValue> inputs;
+        inputs.push_back(tensor_image);
+        at::Tensor results = model.forward(inputs).toTensor();
+
+        // Mostramos los resultados
+        cv::imshow("Detector de Chapas", results.cpu().squeeze().permute({1, 2, 0}).detach().numpy());
+
+        int t = cv::waitKey(5);
+        if (t == 27)
+            break;
+    }
+
+    cap.release();
+    cv::destroyAllWindows();
+
+    return 0;
+}

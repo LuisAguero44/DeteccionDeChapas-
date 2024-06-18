@@ -1,0 +1,51 @@
+#include <iostream>
+#include <opencv2/opencv.hpp>
+#include <torch/script.h>
+#include <torch/torch.h>
+
+using namespace cv;
+using namespace std;
+
+int main() {
+    // Cargar el modelo YOLOv5 en formato ONNX
+    torch::jit::script::Module model = torch::jit::load("best.onnx");
+
+    // Cargar la imagen
+    string im = "imagenprueba.png";
+    Mat img = imread(im);
+
+    // Convertir la imagen a un tensor
+    torch::Tensor tensor_image = torch::from_blob(img.data, {1, img.rows, img.cols, 3}, torch::kByte);
+    tensor_image = tensor_image.permute({0, 3, 1, 2});
+    tensor_image = tensor_image.to(torch::kFloat) / 255.0;
+
+    // Realizar la inferencia
+    std::vector<torch::jit::IValue> inputs;
+    inputs.push_back(tensor_image);
+    at::Tensor results = model.forward(inputs).toTensor();
+
+    // Obtener las coordenadas de la chapa
+    torch::Tensor coor = results[0]["box"];
+    int chapax1 = round(coor[0].item().toFloat());
+    int chapay1 = round(coor[1].item().toFloat());
+    int chapax2 = round(coor[2].item().toFloat());
+    int chapay2 = round(coor[3].item().toFloat());
+
+    // Dibujar un rectángulo en la imagen de salida
+    rectangle(img, Point(chapax1, chapay1), Point(chapax2, chapay2), Scalar(0, 255, 0), 2);
+
+    // Mostrar la imagen con el rectángulo dibujado
+    imshow("Detector de Chapas", img);
+
+    // Esperar hasta que se presione la tecla ESC (27) para salir
+    while (true) {
+        int key = waitKey(1);
+        if (key == 27)
+            break;
+    }
+
+    // Cerrar todas las ventanas
+    destroyAllWindows();
+
+    return 0;
+}

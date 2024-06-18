@@ -1,0 +1,76 @@
+#include <iostream>
+#include <opencv2/opencv.hpp>
+#include <torch/script.h>
+#include <torch/torch.h>
+
+using namespace cv;
+using namespace std;
+
+int main() {
+    // Cargar el modelo YOLOv5 desde un archivo ONNX
+    torch::jit::script::Module model = torch::jit::load("best.onnx");
+
+    // Video
+    string video = "C:/Users/ceom1/Desktop/Facultad/9no Semestre/IA/DataSet_Chapas/YOLOv5/ch03_20230901103040.mp4";
+    VideoCapture cap(video);
+
+    // Definimos el área de interés
+    int y1 = 250;
+    int y2 = 560;
+    int x1 = 450;
+    int x2 = 1085;
+
+    int cont = 0;
+    int mod = 1190;
+
+    while (cap.isOpened()) {
+        // Recuperamos los frames del video uno a uno
+        cont++;
+        cout << "\rProcesando frame numero: " << cont << flush;
+
+        Mat frame;
+        cap >> frame;
+
+        if (frame.empty())
+            break;
+
+        // Recortamos el área de interés del frame
+        Mat img_in = frame(Rect(x1, y1, x2 - x1, y2 - y1));
+
+        if (cont >= mod) {
+            // Realizamos la inferencia con el modelo
+            at::Tensor results = model.forward({img_in});
+            try {
+                // Procesamos los resultados para obtener las coordenadas de la chapa
+                auto crop = results.toTensor().slice(1, 0, 1);
+                auto coor = crop[0]["box"];
+                int chapax1 = round(coor[0].item().toFloat());
+                int chapay1 = round(coor[1].item().toFloat());
+                int chapax2 = round(coor[2].item().toFloat());
+                int chapay2 = round(coor[3].item().toFloat());
+                
+                // Dibujamos el rectángulo alrededor de la chapa en el frame original
+                rectangle(frame, Point(x1 + chapax1, y1 + chapay1), Point(x1 + chapax2, y1 + chapay2), Scalar(0, 255, 0), 2);
+                cout << "Chapa Detectada" << endl;
+            } catch (...) {
+                cout << "Chapa no Detectada" << endl;
+            }
+        }
+        
+        // Dibujamos el área de interés en el frame
+        rectangle(frame, Point(x1, y1), Point(x2, y2), Scalar(255, 0, 0), 2);
+
+        // Mostramos el frame con el área de interés y la chapa detectada
+        imshow("Detector de Chapas", frame);
+
+        int key = waitKey(5);
+        if (key == 27)
+            break;
+    }
+
+    // Liberamos los recursos
+    cap.release();
+    destroyAllWindows();
+
+    return 0;
+}
